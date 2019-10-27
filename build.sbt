@@ -1,4 +1,4 @@
-val ZioVersion       = "1.0.0-RC15"
+val ZioVersion = "1.0.0-RC15"
 
 resolvers ++= Seq(
   Resolver.sonatypeRepo("releases"),
@@ -13,9 +13,9 @@ lazy val root = (project in file("."))
     scalaVersion := "2.12.10",
     maxErrors := 3,
     libraryDependencies ++= Seq(
-      "dev.zio"       %% "zio"              % ZioVersion,
-      "dev.zio"       %% "zio-test"         % ZioVersion % "test",
-      "dev.zio"       %% "zio-test-sbt"     % ZioVersion % "test",
+      "dev.zio" %% "zio"          % ZioVersion,
+      "dev.zio" %% "zio-test"     % ZioVersion % "test",
+      "dev.zio" %% "zio-test-sbt" % ZioVersion % "test"
     )
   )
 
