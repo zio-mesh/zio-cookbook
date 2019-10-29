@@ -1,4 +1,4 @@
-val ZioVersion = "1.0.0-RC15"
+val ZioVersion = "1.0.0-RC16"
 
 resolvers ++= Seq(
   Resolver.sonatypeRepo("releases"),

@@ -1,10 +1,8 @@
-package fib
+package fiber
 
 import zio._
-import zio.console._
 import zio.test._
 import zio.test.Assertion._
-import zio.test.environment._
 
 import Fib0._
 
