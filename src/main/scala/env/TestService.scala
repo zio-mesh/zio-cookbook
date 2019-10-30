@@ -1,0 +1,24 @@
+package env
+
+import zio.{ Task }
+import env.Common._
+
+class TestService extends Database.Service {
+  private var map: Map[UserID, UserProfile] = Map()
+
+  def setTestData(map0: Map[UserID, UserProfile]): Task[Unit] =
+    Task { map = map0 }
+
+  def getTestData: Task[Map[UserID, UserProfile]] =
+    Task(map)
+
+  def lookup(id: UserID): Task[UserProfile] =
+    Task(map(id))
+
+  def update(id: UserID, profile: UserProfile): Task[Unit] =
+    Task.effect { map = map + (id -> profile) }
+}
+trait TestDatabase extends Database {
+  val database: TestService = new TestService
+}
+object TestDatabase extends TestDatabase
