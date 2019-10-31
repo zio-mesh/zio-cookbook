@@ -3,8 +3,8 @@ package env
 import zio.{ Task, ZIO }
 
 object Common {
-  trait UserID
-  trait UserProfile
+  final case class UserID(n: Int)
+  final case class UserProfile(id: UserID)
 
 }
 

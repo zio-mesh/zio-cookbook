@@ -1,3 +1,5 @@
+// Implement a mock DB service
+
 package env
 
 import zio.{ Task }
@@ -18,6 +20,9 @@ class TestService extends Database.Service {
   def update(id: UserID, profile: UserProfile): Task[Unit] =
     Task.effect { map = map + (id -> profile) }
 }
+
+object TestService extends TestService
+
 trait TestDatabase extends Database {
   val database: TestService = new TestService
 }
