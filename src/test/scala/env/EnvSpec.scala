@@ -4,7 +4,7 @@ import zio.test.{ assert, suite, testM }
 import zio.test.Assertion.{ equalTo }
 import zio.cookbook.env.Common.{ UserID, UserProfile }
 
-import zio.cookbook.test._
+import zio.cookbook.test.ZIOBaseSpec
 
 object DBSpec
     extends ZIOBaseSpec(
