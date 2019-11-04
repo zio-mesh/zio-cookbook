@@ -1,4 +1,4 @@
-package bracket
+package zio.cookbook.bracket
 
 import java.io.{ File, FileInputStream }
 

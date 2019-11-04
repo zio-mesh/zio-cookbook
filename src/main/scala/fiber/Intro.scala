@@ -1,4 +1,4 @@
-package fiber
+package zio.cookbook.fiber
 
 import zio.{ App, Fiber, UIO }
 import zio.console.{ putStrLn }

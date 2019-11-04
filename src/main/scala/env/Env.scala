@@ -1,4 +1,4 @@
-package env
+package zio.cookbook.env
 
 import zio.{ Task, ZIO }
 

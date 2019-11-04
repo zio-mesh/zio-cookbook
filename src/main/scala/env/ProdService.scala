@@ -1,9 +1,9 @@
 // Implement actual DB service
 
-package env
+package zio.cookbook.env
 
 import zio.{ Task }
-import env.Common._
+import zio.cookbook.env.Common._
 
 trait DatabaseLive extends Database {
   def database: Database.Service =

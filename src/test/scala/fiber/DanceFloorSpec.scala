@@ -1,4 +1,4 @@
-package fiber
+package zio.cookbook.fiber
 
 import zio.duration._
 import zio.test.{ assert, suite, testM, DefaultRunnableSpec }

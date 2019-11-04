@@ -1,4 +1,4 @@
-package bracket
+package zio.cookbook.bracket
 
 import zio.{ Task, UIO }
 import java.io.FileInputStream

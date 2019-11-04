@@ -1,4 +1,4 @@
-package fiber
+package zio.cookbook.fiber
 package simplesemaphore
 
 import zio.{ IO, Ref, UIO }

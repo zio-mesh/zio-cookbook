@@ -1,12 +1,13 @@
-package env
+package zio.cookbook.env
 
-import zio.test.{ assert, suite, testM, DefaultRunnableSpec }
+import zio.test.{ assert, suite, testM }
 import zio.test.Assertion.{ equalTo }
-import env.Common.UserID
-import env.Common.UserProfile
+import zio.cookbook.env.Common.{ UserID, UserProfile }
+
+import zio.cookbook.test._
 
 object DBSpec
-    extends DefaultRunnableSpec(
+    extends ZIOBaseSpec(
       suite("DBSpec")(
         testM("access to Mock DB") {
           val user0 = UserID(0)

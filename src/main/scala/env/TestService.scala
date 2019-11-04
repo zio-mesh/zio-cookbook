@@ -1,9 +1,9 @@
 // Implement a mock DB service
 
-package env
+package zio.cookbook.env
 
 import zio.{ Task }
-import env.Common._
+import zio.cookbook.env.Common._
 
 class TestService extends Database.Service {
   private var map: Map[UserID, UserProfile] = Map()
