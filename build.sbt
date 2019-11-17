@@ -1,4 +1,5 @@
-val ZioVersion = "1.0.0-RC16"
+val zioVersion  = "1.0.0-RC16"
+val catsVersion = "2.0.0"
 
 resolvers ++= Seq(
   Resolver.sonatypeRepo("releases"),
@@ -13,9 +14,10 @@ lazy val root = (project in file("."))
     scalaVersion := "2.12.10",
     maxErrors := 3,
     libraryDependencies ++= Seq(
-      "dev.zio" %% "zio"          % ZioVersion,
-      "dev.zio" %% "zio-test"     % ZioVersion % "test",
-      "dev.zio" %% "zio-test-sbt" % ZioVersion % "test"
+      "org.typelevel" %% "cats-core"    % catsVersion,
+      "dev.zio"       %% "zio"          % zioVersion,
+      "dev.zio"       %% "zio-test"     % zioVersion % "test",
+      "dev.zio"       %% "zio-test-sbt" % zioVersion % "test"
     )
   )
 
@@ -25,8 +27,8 @@ testFrameworks := Seq(new TestFramework("zio.test.sbt.ZTestFramework"))
 scalacOptions --= Seq(
   "-Xfatal-warnings"
 )
-addCompilerPlugin(scalafixSemanticdb)
-addCompilerPlugin("org.scalamacros" % "paradise" % "2.1.1" cross CrossVersion.full)
+addCompilerPlugin("org.typelevel"   %% "kind-projector" % "0.11.0" cross CrossVersion.full)
+addCompilerPlugin("org.scalamacros" % "paradise"        % "2.1.1" cross CrossVersion.full)
 
 // Aliases
 addCommandAlias("rel", "reload")
