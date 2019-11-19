@@ -1,5 +1,6 @@
-val zioVersion  = "1.0.0-RC16"
-val catsVersion = "2.0.0"
+val zioVersion         = "1.0.0-RC17"
+val catsVersion        = "2.1.0-RC1"
+val catsInteropVersion = "2.0.0.0-RC6"
 
 resolvers ++= Seq(
   Resolver.sonatypeRepo("releases"),
@@ -14,10 +15,11 @@ lazy val root = (project in file("."))
     scalaVersion := "2.12.10",
     maxErrors := 3,
     libraryDependencies ++= Seq(
-      "org.typelevel" %% "cats-core"    % catsVersion,
-      "dev.zio"       %% "zio"          % zioVersion,
-      "dev.zio"       %% "zio-test"     % zioVersion % "test",
-      "dev.zio"       %% "zio-test-sbt" % zioVersion % "test"
+      "org.typelevel" %% "cats-core"        % catsVersion,
+      "dev.zio"       %% "zio"              % zioVersion,
+      "dev.zio"       %% "zio-interop-cats" % catsInteropVersion,
+      "dev.zio"       %% "zio-test"         % zioVersion % "test",
+      "dev.zio"       %% "zio-test-sbt"     % zioVersion % "test"
     )
   )
 
@@ -27,8 +29,9 @@ testFrameworks := Seq(new TestFramework("zio.test.sbt.ZTestFramework"))
 scalacOptions --= Seq(
   "-Xfatal-warnings"
 )
-addCompilerPlugin("org.typelevel"   %% "kind-projector" % "0.11.0" cross CrossVersion.full)
-addCompilerPlugin("org.scalamacros" % "paradise"        % "2.1.1" cross CrossVersion.full)
+addCompilerPlugin("org.typelevel"   %% "kind-projector"     % "0.11.0" cross CrossVersion.full)
+addCompilerPlugin("com.olegpy"      %% "better-monadic-for" % "0.3.1")
+addCompilerPlugin("org.scalamacros" % "paradise"            % "2.1.1" cross CrossVersion.full)
 
 // Aliases
 addCommandAlias("rel", "reload")
