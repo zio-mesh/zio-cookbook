@@ -1,10 +1,14 @@
 package env
 
 import zio._
-import zio.test.Assertion.equalTo
 import zio.test._
+import zio.test.Assertion._
 import zio.duration._
-import zio.test.mock.MockConsole.putStrLn
+
+import zio.cookbook.test.ZIOBaseSpec
+
+import cats.Eval
+// import zio.test.mock.MockConsole.putStrLn
 
 //noinspection TypeAnnotation
 object ToTest {
@@ -14,13 +18,18 @@ object ToTest {
   }
   val getCallCount: UIO[Int] = ZIO.effectTotal(callCount)
 
-  val scalaVal: Task[Int] = ZIO.effect {
+  val plainVal: Int = {
     callCount = callCount + 1
     println(s"v1: $callCount")
     callCount
   }
 
+  val scalaVal: Task[Int] = ZIO.effect(plainVal)
+
   val rand = random.nextString(2)
+
+  val catsNow   = Eval.now(plainVal)
+  val catsLater = Eval.later(plainVal)
 
   val scalaValMemoized = scalaVal.memoize
   val scalaValCached   = scalaVal.cached(10.seconds).flatten
@@ -97,7 +106,7 @@ object ToTest {
 
   // Arrows
   val add1: FunctionIO[Nothing, Int, Int] = FunctionIO.fromFunction(_ + 1)
-  val eff1: FunctionIO[Nothing, Int, Int] = FunctionIO.succeedLazy(-1)
+  val eff1: FunctionIO[Nothing, Int, Int] = FunctionIO.effectTotal(_ => -1)
   val mul2: FunctionIO[Nothing, Int, Int] = FunctionIO.fromFunction(_ * 2)
 
   val out = -4
@@ -110,7 +119,7 @@ object ToTest {
 
 import ToTest._
 
-object ZIOLazySpec
+object LazySpec
     extends ZIOBaseSpec(
       suite("ZIO val/def/memoize Specs")(
         testM("arrow compose lifed methods") {
@@ -122,11 +131,37 @@ object ZIOLazySpec
             v1   <- (add1 >>> add1 >>> add1).run(init)
           } yield assert(v1, equalTo(out + 3))
         },
-        testM("Lazy test") {
+        // testM("Lazy test") {
+        //   for {
+        //     v0 <- eff0
+        //     v1 <- eff0
+        //   } yield assert(v0, equalTo(v1))
+        // },
+        testM("Cats Lazy eval with ZIO caches a task") {
           for {
-            v0 <- eff0
-            v1 <- eff0
-          } yield assert(v0, equalTo(v1))
+            init <- ZIO.effect(Eval.later(plainVal))
+            val1 <- Task(init)
+            val2 <- Task(init)
+          } yield assert(val1, equalTo(val2))
+        },
+        testM("Cats Eager eval with ZIO doesn't cache a task") {
+          for {
+            init <- ZIO.effect(Eval.now(plainVal))
+            val1 <- ZIO.effect(init.value)
+            val2 <- Task(init.value)
+          } yield assert(val1, equalTo(val2))
+        },
+        testM("Cats Later must cache values") {
+          for {
+            val1 <- Task(catsLater)
+            val2 <- Task(catsLater)
+          } yield assert(val1.value, equalTo(val2.value))
+        },
+        testM("Cats now must NOT cache values") {
+          for {
+            val1 <- Task(catsNow)
+            val2 <- Task(catsNow)
+          } yield assert(val1.value, isLessThan(val2.value))
         }
       )
     )
