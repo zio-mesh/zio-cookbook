@@ -19,7 +19,7 @@ object Lib {
 
 object App0 extends App {
   def run(args: List[String]) =
-    compute0.fold(_ => 1, _ => 0)
+    compute0.as(0)
 
   val compute0 = for {
     fibs <- Lib.fib(10).fork
