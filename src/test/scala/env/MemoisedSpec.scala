@@ -21,7 +21,7 @@ object ToTest {
   }
   val getCallCount: UIO[Int] = ZIO.effectTotal(callCount)
 
-  val plainVal: Int = {
+  def plainVal: Int = {
     callCount = callCount + 1
     println(s"v1: $callCount")
     callCount
@@ -134,14 +134,14 @@ object LazySpec
             init <- ZIO.effect(Eval.later(plainVal))
             val1 <- Task(init)
             val2 <- Task(init)
-          } yield assert(val1, equalTo(val2))
+          } yield assert(val1.value, equalTo(val2.value))
         },
         testM("Cats Eager eval with ZIO doesn't cache a task") {
           for {
-            init <- ZIO.effect(Eval.now(plainVal))
+            init <- ZIO.effect(Eval.always(plainVal))
             val1 <- ZIO.effect(init.value)
             val2 <- Task(init.value)
-          } yield assert(val1, equalTo(val2))
+          } yield assert(val1, isLessThan(val2))
         },
         testM("Cats Later must cache values") {
           for {
