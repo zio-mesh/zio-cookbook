@@ -1,12 +1,15 @@
 package env
 
-import zio._
+import zio.{ test => _, _ }
 import zio.test._
 import zio.test.Assertion._
 import zio.duration._
 
 import zio.cookbook.test.ZIOBaseSpec
 
+import cats.effect.Timer
+import zio.interop.catz.{ test => _, _ }
+import zio.interop.catz.implicits._
 import cats.Eval
 // import zio.test.mock.MockConsole.putStrLn
 
@@ -76,19 +79,11 @@ object ToTest {
     } yield assert(val1, equalTo(val2))
   }
 
-  // val test0 = testM("test0") {
-  //   for {
-  //     str <- rand.memoize
-  //     str0  str
-  //   } yield assert(str, equalTo(str0))
-  // }
   val t = Task {
     println(s"Compute")
     5
   }
   val test0 = testM("0") {
-    // val out = t.flatMap(tt => tt + tt)
-    // assert(t, equalTo(out))
     for {
       memoized <- t.memoize
       tt1      <- memoized
@@ -100,9 +95,6 @@ object ToTest {
     println(s"Compute")
     5
   }
-
-  // val eff = Task.effect()
-  // val v0 = FunctionIO.fromFunction(func)
 
   // Arrows
   val add1: FunctionIO[Nothing, Int, Int] = FunctionIO.fromFunction(_ + 1)
@@ -157,11 +149,18 @@ object LazySpec
             val2 <- Task(catsLater)
           } yield assert(val1.value, equalTo(val2.value))
         },
-        testM("Cats now must NOT cache values") {
-          for {
-            val1 <- Task(catsNow)
-            val2 <- Task(catsNow)
-          } yield assert(val1.value, isLessThan(val2.value))
+        test("Cats now must NOT cache values") {
+          val lval1 = catsLater.value
+          val lval2 = catsLater.value
+          val val1  = catsNow.value
+          val val2  = catsNow.value
+          val val3  = catsNow.value
+          println(s"val3 = $val3")
+          assert(val1, isLessThan(val2)) && assert(lval1, isLessThan(lval2))
         }
       )
     )
+
+object Helper {
+  type ATask[A] = A
+}
