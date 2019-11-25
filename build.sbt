@@ -1,5 +1,6 @@
 val zioVersion         = "1.0.0-RC17"
-val catsVersion        = "2.0.0" //"2.1.0-RC1"
+val catsVersion        = "2.1.0-RC1"
+val catsEffVersion     = "2.0.0"
 val catsInteropVersion = "2.0.0.0-RC8"
 
 resolvers ++= Seq(
@@ -12,11 +13,11 @@ lazy val root = (project in file("."))
     organization := "Neurodyne",
     name := "zio-cookbook",
     version := "0.0.1",
-    scalaVersion := "2.12.10",
+    scalaVersion := "2.13.1",
     maxErrors := 3,
     libraryDependencies ++= Seq(
       "org.typelevel" %% "cats-core"        % catsVersion,
-      "org.typelevel" %% "cats-effect"      % catsVersion,
+      "org.typelevel" %% "cats-effect"      % catsEffVersion,
       "dev.zio"       %% "zio"              % zioVersion,
       "dev.zio"       %% "zio-interop-cats" % catsInteropVersion,
       "dev.zio"       %% "zio-test"         % zioVersion % "test",
@@ -32,7 +33,7 @@ scalacOptions --= Seq(
 )
 addCompilerPlugin("org.typelevel"   %% "kind-projector"     % "0.11.0" cross CrossVersion.full)
 addCompilerPlugin("com.olegpy"      %% "better-monadic-for" % "0.3.1")
-addCompilerPlugin("org.scalamacros" % "paradise"            % "2.1.1" cross CrossVersion.full)
+// addCompilerPlugin("org.scalamacros" % "paradise"            % "2.1.1" cross CrossVersion.full)
 
 // Aliases
 addCommandAlias("rel", "reload")
