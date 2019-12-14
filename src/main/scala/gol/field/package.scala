@@ -13,4 +13,7 @@ package object field extends FieldLogic.Service[FieldLogic with Random] {
 
   override def makeTurn(f: Field): FieldTaskR[CellLogic with FieldLogic with Random, Field] =
     ZIO.accessM(_.field.makeTurn(f))
+
+  override def persistField(f: Field): FieldTask[String] = ZIO.accessM(_.field.persistField(f))
+  override def parseField(str: String): FieldTask[Field] = ZIO.accessM(_.field.parseField(str))
 }

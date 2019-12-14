@@ -1,5 +1,6 @@
 package gol.field
 
+import gol.cell.Cell.State
 import gol.cell._
 import zio._
 import zio.random._
@@ -24,10 +25,51 @@ object FieldLogic {
     def cellNeighbours(field: Field, f: Cell): FieldTask[Seq[Cell]] = cellNeighbours(field, f.row, f.col)
 
     def makeTurn(f: Field): FieldTaskR[CellLogic with FieldLogic with Random, Field]
+
+    def persistField(f: Field): FieldTask[String]
+    def parseField(str: String): FieldTask[Field]
   }
 
-  class StdRules(rows: Int, cols: Int, allowDiagonals: Boolean = false) extends FieldLogic {
+  class StdRules(rows: Int, cols: Int, allowDiagonals: Boolean, batchSize: Int) extends FieldLogic {
     override val field: Service[Any] = new Service[Any] {
+
+      override def persistField(f: Field): FieldTask[String] = ZIO.effect {
+        f.mapCells(_.state match {
+            case State.Live => "1"
+            case _          => "0"
+          })
+          .map(_.mkString(" "))
+          .mkString("\n")
+      }
+
+      override def parseField(str: String): FieldTask[Field] = {
+        val columnsToParse = str.indexOf('\n') / 2 + 1
+        val statesM = ZIO.effect(
+          str
+            .split(Array(' ', '\n'))
+            .toList
+            .map {
+              case "1" => State.Live
+              case _   => State.Dead
+            }
+            .grouped(columnsToParse)
+            .toList
+        )
+        for {
+          parsedStates <- statesM
+          _            <- ZIO.effect(println(parsedStates))
+          loaded <- fieldT(
+                     (x, y) =>
+                       ZIO.effect {
+                         try {
+                           parsedStates(x)(y)
+                         } catch {
+                           case _: Throwable => Cell.State.Dead
+                         }
+                       }
+                   )
+        } yield loaded
+      }
 
       override def fieldT(fieldState: (Int, Int) => Task[Cell.State]): FieldTask[Field] = {
         val cells = ZIO.collectAll((0 until rows) map { row =>
@@ -60,13 +102,19 @@ object FieldLogic {
         }
       }
 
-      override def makeTurn(f: Field): FieldTaskR[CellLogic with FieldLogic with Random, Field] = {
-        def mapRow(row: List[Cell]) = ZIO.collectAll(row.map(cell => nextState(cell, f)))
-
-        ZIO
-          .foreach(f.cells)(mapRow)
-          .map(newCells => Field(f.rows, f.cols, newCells, f.turn + 1))
-      }
+      override def makeTurn(f: Field): FieldTaskR[CellLogic with FieldLogic with Random, Field] =
+        for {
+          batches  <- ZIO.effectTotal(f.allCells.grouped(100).toIterable)
+          newCells <- ZIO.foreachPar(batches)(batch => ZIO.collectAll(batch.map(cell => nextState(cell, f))))
+        } yield f.updateStep(newCells)
     }
   }
+
+  object StdRules {
+    def apply(rows: Int, cols: Int, allowDiagonals: Boolean): StdRules = {
+      val batchSize = (rows * cols) / 4
+      new StdRules(rows, cols, allowDiagonals, batchSize)
+    }
+  }
+
 }

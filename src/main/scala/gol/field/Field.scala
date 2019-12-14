@@ -3,7 +3,9 @@ package gol.field
 import gol.cell.Cell
 
 final case class Field(rows: Int, cols: Int, cells: List[List[Cell]], turn: Long = 0) {
-  def mapRows[T](f: Cell => T): List[List[T]] = cells.map(_.map(f))
+  def updateStep(newCells: List[List[Cell]]): Field = copy(cells = newCells, turn = turn + 1)
+
+  def mapCells[T](f: Cell => T): List[List[T]] = cells.map(_.map(f))
   def mapStates(f: Cell => Cell.State): Field =
     copy(cells = cells.map(_.map(cell => cell.copy(state = f(cell)))), turn = turn + 1)
 

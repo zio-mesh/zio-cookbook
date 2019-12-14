@@ -1,15 +1,14 @@
 package gol
 
 import gol.Helpers._
-import gol.cell.Cell.State
 import gol.cell.CellLogic._
 import gol.cell.{ Cell, CellLogic }
-import gol.field.{ Field, FieldLogic }
+import gol.field.FieldLogic
+import zio._
+import zio.console._
 import zio.random.Random
 import zio.test.Assertion.equalTo
 import zio.test.{ assert, suite, testM, DefaultRunnableSpec }
-import zio._
-import zio.console._
 
 object Helpers {
 
@@ -19,7 +18,7 @@ object Helpers {
   type GOLTestEnv = FieldLogic with CellLogic with Random with Console
   private def buildTestEnv(cellLogic: CellLogic): Task[GOLTestEnv] = ZIO.effectTotal(
     new FieldLogic with CellLogic with Random.Live with Console.Live {
-      override val field: FieldLogic.Service[Any] = new FieldLogic.StdRules(maxW, maxH, true).field
+      override val field: FieldLogic.Service[Any] = FieldLogic.StdRules(maxW, maxH, allowDiagonals = true).field
       override val cells: CellLogic.Service[Any]  = cellLogic.cells
     }
   )
