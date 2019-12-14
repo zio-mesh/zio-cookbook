@@ -2,11 +2,15 @@ package gol
 import gol.cell.Cell.State
 import gol.cell._
 import gol.field._
+import gol.gui.GUI.WindowController
+import gol.gui._
 import zio._
 import zio.clock._
+import zio.console._
 import zio.duration._
-import zio.console.Console
 import zio.random.Random
+
+import scala.util.Try
 
 object GameOfLife extends App {
 
@@ -24,40 +28,117 @@ object GameOfLife extends App {
 
   private def renderField(turn: Long, f: Field) = {
     def stateToSymbol(st: Cell.State) = st match {
-      case State.Live  => "+"
-      case State.Dead  => " "
+      case State.Live  => "1"
+      case State.Dead  => "0"
       case State.Empty => " "
     }
 
-    clearConsole *>
-      ZIO.effectTotal {
-        val rendered = f.cells.map {
-          case (_, col) => col.map { case (_, cell) => stateToSymbol(cell.state) }.mkString("")
-        }.mkString("\n")
-        println(s"""TURN: $turn
-                   |$rendered
-                   |""".stripMargin)
-      } *> sleep(1.second * (1f / 3))
+    clearConsole *> ZIO.effectTotal {
+      val rendered = f.cells.map {
+        _.map { cell =>
+          stateToSymbol(cell.state)
+        }.mkString("")
+      }.mkString("\n")
+      println(s"TURN: $turn\n$rendered\n")
+    }
   }
 
+  private def persistField(f: Field) = ZIO.effect {
+    f.mapRows(_.state match {
+        case State.Live => "1"
+        case _          => "0"
+      })
+      .map(_.mkString(" "))
+      .mkString("\n")
+  }
+  private def parseField(str: String) = {
+    val columnsToParse = str.indexOf('\n') / 2 + 1
+    println(columnsToParse)
+    val statesM = ZIO.effect(
+      str
+        .split(Array(' ', '\n'))
+        .toList
+        .map {
+          case "1" => State.Live
+          case _   => State.Dead
+        }
+        .grouped(columnsToParse)
+        .toList
+    )
+    for {
+      parsedStates <- statesM
+      _            <- ZIO.effect(println(parsedStates))
+      loaded <- fieldT(
+                 (x, y) =>
+                   ZIO.effect {
+                     try {
+                       parsedStates(x)(y)
+                     } catch {
+                       case _: Throwable => Cell.State.Dead
+                     }
+                   }
+               )
+    } yield loaded
+  }
+
+  val Blinker: String =
+    "0 0 0 0 0\n" +
+      "0 0 1 0 0\n" +
+      "0 0 1 0 0\n" +
+      "0 0 1 0 0\n" +
+      "0 0 0 0 0\n"
+
+  val Toad: String =
+    """0 0 0 0 0 0
+      |0 0 0 0 0 0
+      |0 0 1 1 1 0
+      |0 1 1 1 0 0
+      |0 0 0 0 0 0
+      |0 0 0 0 0 0
+      |""".stripMargin
+
   override def run(args: List[String]): ZIO[zio.ZEnv, Nothing, Int] = {
-    val env     = buildEnv(20, 20, CellLogic.rules.classicRules2)
-    val maxTurn = 100
+    val cols = 30
+    val rows = 30
+    val env  = buildEnv(cols, rows, CellLogic.rules.classicRules)
 
-    def runGame(f: Field, turn: Long): ZIO[GOLTestEnv, Throwable, Unit] =
+    val uiLogic = {
+      def updateUi(queue: Queue[Field], ctrl: WindowController) =
+        for {
+          upd <- queue.take
+          _   <- ctrl.update(upd)
+          _   <- sleep(500.millis)
+        } yield ()
+
+      def buildUi(queue: Queue[Field]) =
+        for {
+          ctrl <- GUI.window(rows, cols)
+          _    <- updateUi(queue, ctrl).forever.fork
+        } yield ()
+
+      def runGameLogic(cur: Field, queue: Queue[Field]): ZIO[GOLTestEnv, Throwable, Unit] =
+        for {
+          newField     <- field.makeTurn(cur)
+          _            <- queue.offer(newField)
+          continueGame = newField.allCells.exists(_.state == State.Live)
+          _            <- runGameLogic(newField, queue).when(continueGame)
+          _            <- renderField(cur.turn, cur).when(!continueGame)
+        } yield ()
+
       for {
-        _        <- ZIO.effect(println(turn))
-        newField <- field.makeTurn(f)
-        _        <- renderField(turn, newField)
-        _        <- runGame(newField, turn + 1).when(f != newField && turn < maxTurn)
+        queue        <- Queue.bounded[Field](100)
+        initialFiled <- field.randomField
+        _            <- queue.offer(initialFiled)
+        _            <- buildUi(queue)
+        fiber        <- runGameLogic(initialFiled, queue).fork
+        _            <- fiber.join
+        fiber2       <- ZIO.unit.forever.fork
+        _            <- queue.awaitShutdown
+        _            <- fiber2.join
       } yield ()
+    }
 
-    val logic = for {
-      rndField <- field.randomField
-      _        <- runGame(rndField, 1)
-    } yield ()
-
-    logic
+    uiLogic
       .provide(env)
       .fold(ex => {
         println(ex.getMessage)

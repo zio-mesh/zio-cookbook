@@ -8,8 +8,8 @@ package object field extends FieldLogic.Service[FieldLogic with Random] {
   override def cellNeighbours(field: Field, x: Int, y: Int): FieldTask[Seq[Cell]] =
     ZIO.accessM(_.field.cellNeighbours(field, x, y))
 
-  override def constantFiled(fieldState: Task[Cell.State]): FieldTask[Field] =
-    ZIO.accessM(_.field.constantFiled(fieldState))
+  override def fieldT(fieldState: (Int, Int) => Task[Cell.State]): FieldTask[Field] =
+    ZIO.accessM(_.field.fieldT(fieldState))
 
   override def makeTurn(f: Field): FieldTaskR[CellLogic with FieldLogic with Random, Field] =
     ZIO.accessM(_.field.makeTurn(f))

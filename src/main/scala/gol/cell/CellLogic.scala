@@ -21,9 +21,9 @@ object CellLogic {
 
       override def nextState(c: Cell, f: Field): ZIO[FieldLogic with Random, Throwable, Cell] =
         for {
-          neighbours <- cellNeighbours(f, c.x, c.y)
+          neighbours <- cellNeighbours(f, c)
           newState   <- next(c, neighbours)
-        } yield Cell(c.x, c.y, newState)
+        } yield Cell(c.row, c.col, newState)
     }
   }
 
@@ -47,26 +47,10 @@ object CellLogic {
     val classicRules: CellLogic = buildRules { (cell, neighbours) =>
       val liveNeighbours = neighbours.count(_.state == State.Live)
       cell match {
-        // Any live cell with fewer than two live neighbours dies, as if by underpopulation.
-        case State.Live if liveNeighbours < 2 => State.Dead
-        // Any live cell with two or three live neighbours lives on to the next generation.
-        case State.Live if liveNeighbours == 2 || liveNeighbours == 3 => State.Live
-        // Any live cell with more than three live neighbours dies, as if by overpopulation.
-        case State.Live if liveNeighbours > 3 => State.Dead
-        // Any dead cell with exactly three live neighbours becomes a live cell, as if by reproduction.
-        case State.Dead if liveNeighbours == 3 => State.Live
-
-        case _ => State.Dead
-      }
-    }
-
-    val classicRules2: CellLogic = buildRules { (cell, neighbours) =>
-      val liveNeighbours = neighbours.count(_.state == State.Live)
-      cell match {
         // Any live cell with two or three neighbors survives.
         case State.Live if liveNeighbours == 2 || liveNeighbours == 3 => State.Live
         // Any dead cell with three live neighbors becomes a live cell.
-        case State.Dead if liveNeighbours == 3 => State.Live
+        case State.Dead | State.Empty if liveNeighbours == 3 => State.Live
         // All other live cells die in the next generation. Similarly, all other dead cells stay dead.
         case _ => State.Dead
       }

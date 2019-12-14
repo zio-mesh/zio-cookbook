@@ -2,7 +2,7 @@ package gol.cell
 
 import gol.cell.Cell.State
 
-final case class Cell(x: Int, y: Int, state: State)
+final case class Cell(row: Int, col: Int, state: State)
 object Cell {
   sealed trait State extends Product with Serializable
   object State {
