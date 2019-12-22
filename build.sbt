@@ -29,14 +29,6 @@ lazy val root = (project in file("."))
     version := "0.0.1",
     scalaVersion := "2.13.1",
     maxErrors := 3,
-    // Refine scalac params from tpolecat
-    scalacOptions --= Seq(
-      "-Xfatal-warnings"
-    ),
-    // Scala 2.13
-    scalacOptions ++= Seq(
-      "-Ymacro-annotations"
-    ),
     libraryDependencies ++= Seq(
       "org.typelevel" %% "simulacrum" % simulaVersion
     ),
@@ -44,6 +36,15 @@ lazy val root = (project in file("."))
     catsDeps,
     testFrameworks := Seq(new TestFramework("zio.test.sbt.ZTestFramework"))
   )
+// Refine scalac params from tpolecat
+scalacOptions --= Seq(
+  "-Xfatal-warnings"
+)
+// Scala 2.13
+scalacOptions ++= Seq(
+  "-Ymacro-annotations",
+  "-Ywarn-unused"
+)
 
 addCompilerPlugin("org.typelevel" %% "kind-projector"     % "0.11.0" cross CrossVersion.full)
 addCompilerPlugin("com.olegpy"    %% "better-monadic-for" % "0.3.1")

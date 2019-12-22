@@ -6,10 +6,7 @@ import zio.test.Assertion._
 import zio.duration._
 
 import zio.cookbook.test.ZIOBaseSpec
-
-import cats.effect.Timer
-import zio.interop.catz.{ test => _, _ }
-import zio.interop.catz.implicits._
+// { test => _, _ }
 import cats.Eval
 // import zio.test.mock.MockConsole.putStrLn
 

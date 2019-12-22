@@ -61,11 +61,11 @@ object GUI {
       } yield ()
     }
 
-    implicit class GraphicsOps(val g: Graphics) extends AnyVal {
+    implicit class GraphicsOps(private val g: Graphics) extends AnyVal {
       def drawImageM(img: Image, x: Int, y: Int): Task[Unit] = ZIO.effect(g.drawImage(img, x, y, null)).unit
     }
 
-    implicit class BufferStrategyOps(val bs: BufferStrategy) extends AnyVal {
+    implicit class BufferStrategyOps(private val bs: BufferStrategy) extends AnyVal {
       def graphicsM: TaskManaged[Graphics] = Managed.makeEffect(bs.getDrawGraphics) { gr =>
         gr.dispose()
         bs.show()
@@ -90,7 +90,7 @@ object GUI {
           val frame = new JFrame("Game Of Life")
           frame.setSize(dimension)
           frame.setBackground(colors.background)
-          frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE)
+          frame.setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE)
           frame.setLocationRelativeTo(null)
           frame.setLayout(new BorderLayout())
           frame

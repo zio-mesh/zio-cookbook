@@ -1,6 +1,6 @@
 package tagless
 
-import zio.{ Fiber, FunctionIO, Task, ZIO }
+import zio.{ Task, ZIO }
 import simulacrum.{ typeclass }
 
 @typeclass
