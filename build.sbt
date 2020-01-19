@@ -22,6 +22,10 @@ lazy val catsDeps = libraryDependencies ++= Seq(
   "org.typelevel" %% "cats-effect" % catsEffVersion
 )
 
+lazy val commonDeps = libraryDependencies ++= Seq(
+  "org.typelevel" %% "simulacrum" % simulaVersion
+)
+
 lazy val root = (project in file("."))
   .settings(
     organization := "Neurodyne",
@@ -29,11 +33,9 @@ lazy val root = (project in file("."))
     version := "0.0.1",
     scalaVersion := "2.13.1",
     maxErrors := 3,
-    libraryDependencies ++= Seq(
-      "org.typelevel" %% "simulacrum" % simulaVersion
-    ),
     zioDeps,
     catsDeps,
+    commonDeps,
     testFrameworks := Seq(new TestFramework("zio.test.sbt.ZTestFramework"))
   )
 // Refine scalac params from tpolecat
