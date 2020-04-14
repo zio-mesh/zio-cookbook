@@ -16,8 +16,8 @@ object BracketLib {
     content
   }
 
-  def convertBytes(is: FileInputStream, len: Long) =
-    Task.effect(println(new String(readAll(is, len), StandardCharsets.UTF_8))) // Java 8
-  //Task.effect(println(new String(is.readAllBytes(), StandardCharsets.UTF_8))) // Java 11+
+  def convertBytes(is: FileInputStream /* , len: Long */ ) =
+    // Task.effect(println(new String(readAll(is, len), StandardCharsets.UTF_8))) // Java 8
+    Task.effect(new String(is.readAllBytes(), StandardCharsets.UTF_8)) // Java 11+
 
 }

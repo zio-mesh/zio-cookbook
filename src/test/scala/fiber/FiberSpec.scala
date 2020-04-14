@@ -12,14 +12,13 @@ object Fib0 {
 
 }
 
-object Fib0Spec
-    extends DefaultRunnableSpec(
-      suite("Fib0Spec")(
-        testM("Fib0 works") {
-          for {
-            fib <- getIO.fork
-            out <- fib.await
-          } yield assert(out, equalTo(IO.unit))
-        }
-      )
-    )
+object Fib0Spec extends DefaultRunnableSpec {
+  def spec = suite("Fib0Spec")(
+    testM("Fib0 works") {
+      for {
+        fib <- getIO.fork
+        out <- fib.await
+      } yield assert(out)(equalTo(Exit.unit))
+    }
+  )
+}

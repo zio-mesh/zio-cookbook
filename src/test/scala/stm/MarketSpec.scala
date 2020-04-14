@@ -1,41 +1,39 @@
 package zio.cookbook.stm
 
 import zio.{ Schedule, ZIO }
-import zio.test.{ assert, suite, testM }
+import zio.test._
 import zio.test.Assertion.{ equalTo }
 // import zio.test.TestAspect.{ ignore, timeout }
 import zio.stm.{ STM, TRef }
 
 import zio.cookbook.env.Common.{ UserID, UserProfile }
 import zio.cookbook.env.TestService._
-import zio.cookbook.test.ZIOBaseSpec
 
 import helper._
 
-object MarketSpec
-    extends ZIOBaseSpec(
-      suite("STMSpec")(
-        suite("Dangerous programming spec")(
-          testM("Multiple fibers to lookup the same entry") {
-            for {
-              _   <- setTestData(Map(user0 -> prof0))
-              req <- ZIO.forkAll(List.fill(agents)(lookup(user0))) // spawn fibers
-              res <- req.join // read result from all fibers
-            } yield assert(res, equalTo(initList))
-          }
-        ),
-        suite("STM atomic programming spec")(
-          testM("Multiple fibers to lookup the same entry") {
-            for {
-              tref <- TRef.makeCommit(prof0)
-              _    <- setTestData(Map(user0 -> prof0))
-              req  <- ZIO.forkAll(List.fill(agents)(safeLookup(tref, retries))) // spawn fibers
-              res  <- req.join // read result from all fibers
-            } yield assert(res, equalTo(initList))
-          }
-        )
-      )
+object MarketSpec extends DefaultRunnableSpec {
+  def spec = suite("STMSpec")(
+    suite("Dangerous programming spec")(
+      testM("Multiple fibers to lookup the same entry") {
+        for {
+          _   <- setTestData(Map(user0 -> prof0))
+          req <- ZIO.forkAll(List.fill(agents)(lookup(user0))) // spawn fibers
+          res <- req.join // read result from all fibers
+        } yield assert(res)(equalTo(initList))
+      }
+    ),
+    suite("STM atomic programming spec")(
+      testM("Multiple fibers to lookup the same entry") {
+        for {
+          tref <- TRef.makeCommit(prof0)
+          _    <- setTestData(Map(user0 -> prof0))
+          req  <- ZIO.forkAll(List.fill(agents)(safeLookup(tref, retries))) // spawn fibers
+          res  <- req.join // read result from all fibers
+        } yield assert(res)(equalTo(initList))
+      }
     )
+  )
+}
 
 object helper {
   val user0 = UserID(0)
