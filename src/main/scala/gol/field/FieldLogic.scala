@@ -58,15 +58,14 @@ object FieldLogic {
         for {
           parsedStates <- statesM
           _            <- ZIO.effect(println(parsedStates))
-          loaded <- fieldT(
-                     (x, y) =>
-                       ZIO.effect {
-                         try {
-                           parsedStates(x)(y)
-                         } catch {
-                           case _: Throwable => Cell.State.Dead
-                         }
+          loaded <- fieldT((x, y) =>
+                     ZIO.effect {
+                       try {
+                         parsedStates(x)(y)
+                       } catch {
+                         case _: Throwable => Cell.State.Dead
                        }
+                     }
                    )
         } yield loaded
       }
@@ -91,7 +90,8 @@ object FieldLogic {
           (for {
             r <- row - 1 to row + 1
             c <- col - 1 to col + 1
-          } yield (r, c)).filterNot { case (xx, yy) => xx == row & yy == col } else
+          } yield (r, c)).filterNot { case (xx, yy) => xx == row & yy == col }
+        else
           Seq((row - 1) -> col, (row + 1) -> col, row -> (col - 1), row -> (col + 1))
 
       override def cellNeighbours(field: Field, row: Int, col: Int): FieldTask[Seq[Cell]] = ZIO.effect {
@@ -104,7 +104,7 @@ object FieldLogic {
 
       override def makeTurn(f: Field): FieldTaskR[CellLogic with FieldLogic with Random, Field] =
         for {
-          batches  <- ZIO.effectTotal(f.allCells.grouped(100).toIterable)
+          batches  <- ZIO.effectTotal(f.allCells.grouped(100).iterator.to(Iterable))
           newCells <- ZIO.foreachPar(batches)(batch => ZIO.collectAll(batch.map(cell => nextState(cell, f))))
         } yield f.updateStep(newCells)
     }

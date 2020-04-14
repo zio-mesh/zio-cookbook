@@ -1,9 +1,3 @@
-val zioVersion         = "1.0.0-RC17"
-val catsVersion        = "2.1.0-RC1"
-val catsEffVersion     = "2.0.0"
-val catsInteropVersion = "2.0.0.0-RC10"
-val simulaVersion      = "1.0.0"
-
 resolvers ++= Seq(
   Resolver.mavenLocal,
   Resolver.sonatypeRepo("releases"),
@@ -11,19 +5,20 @@ resolvers ++= Seq(
 )
 
 lazy val zioDeps = libraryDependencies ++= Seq(
-  "dev.zio" %% "zio"              % zioVersion,
-  "dev.zio" %% "zio-interop-cats" % catsInteropVersion,
-  "dev.zio" %% "zio-test"         % zioVersion % "test",
-  "dev.zio" %% "zio-test-sbt"     % zioVersion % "test"
+  "dev.zio" %% "zio"              % Version.zio,
+  "dev.zio" %% "zio-streams"      % Version.zio,
+  "dev.zio" %% "zio-interop-cats" % Version.zioInteropCats,
+  "dev.zio" %% "zio-test"         % Version.zio % "test",
+  "dev.zio" %% "zio-test-sbt"     % Version.zio % "test"
 )
 
 lazy val catsDeps = libraryDependencies ++= Seq(
-  "org.typelevel" %% "cats-core"   % catsVersion,
-  "org.typelevel" %% "cats-effect" % catsEffVersion
+  "org.typelevel" %% "cats-core" % Version.cats
 )
 
 lazy val commonDeps = libraryDependencies ++= Seq(
-  "org.typelevel" %% "simulacrum" % simulaVersion
+  "org.typelevel"         %% "simulacrum" % Version.simulacrum,
+  "com.github.pureconfig" %% "pureconfig" % Version.pureconfig
 )
 
 lazy val root = (project in file("."))
@@ -50,7 +45,6 @@ scalacOptions ++= Seq(
 
 addCompilerPlugin("org.typelevel" %% "kind-projector"     % "0.11.0" cross CrossVersion.full)
 addCompilerPlugin("com.olegpy"    %% "better-monadic-for" % "0.3.1")
-// addCompilerPlugin("org.scalamacros" % "paradise"            % "2.1.1" cross CrossVersion.full)
 
 // Aliases
 addCommandAlias("rel", "reload")

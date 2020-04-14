@@ -36,12 +36,12 @@ object CellLogic {
       buildRulesC((c, cs) => rules(c.state, cs))
 
     val allDies: CellLogic = buildRules((_, _) => State.Dead)
-    val testingRules: CellLogic = buildRules(
-      (cell, neighbours) =>
-        cell match {
-          case State.Live => if (neighbours.size >= 2) Cell.State.Live else Cell.State.Dead
-          case State.Dead => State.Dead
-        }
+    val testingRules: CellLogic = buildRules((cell, neighbours) =>
+      cell match {
+        case State.Live => if (neighbours.size >= 2) Cell.State.Live else Cell.State.Dead
+        case State.Dead => State.Dead
+        case _          => State.Dead
+      }
     )
 
     val classicRules: CellLogic = buildRules { (cell, neighbours) =>

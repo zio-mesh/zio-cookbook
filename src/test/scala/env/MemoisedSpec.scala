@@ -6,11 +6,8 @@ import zio.test.Assertion._
 import zio.duration._
 
 import zio.cookbook.test.ZIOBaseSpec
-// { test => _, _ }
 import cats.Eval
-// import zio.test.mock.MockConsole.putStrLn
 
-//noinspection TypeAnnotation
 object ToTest {
   var callCount: Int = 0;
   val resetCallCount: UIO[Unit] = ZIO.effectTotal {
@@ -120,12 +117,6 @@ object LazySpec
             v1   <- (add1 >>> add1 >>> add1).run(init)
           } yield assert(v1, equalTo(out + 3))
         },
-        // testM("Lazy test") {
-        //   for {
-        //     v0 <- eff0
-        //     v1 <- eff0
-        //   } yield assert(v0, equalTo(v1))
-        // },
         testM("Cats Lazy eval with ZIO caches a task") {
           for {
             init <- ZIO.effect(Eval.later(plainVal))

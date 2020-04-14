@@ -10,10 +10,8 @@ package ladder
 
 import zio._
 import zio.duration._
-import zio.internal.PlatformLive
 
 object Ladder extends App {
-  override val platform = PlatformLive.Default.withReportFailure(_ => ())
 
   override def run(args: List[String]) = {
     val rubles = List.fill(50)(2)
@@ -22,10 +20,9 @@ object Ladder extends App {
                .unbounded[Int]
                .tap(_.offerAll(rubles))
       output <- Queue.unbounded[Int]
-      workers <- ZIO.traverse(1 to 5) { i =>
-                  val job = if (i == 3) { (_: Int) =>
-                    ZIO.fail("third guy dies")
-                  } else {
+      workers <- ZIO.foreach(1 to 5) { i =>
+                  val job = if (i == 3) { (_: Int) => ZIO.fail("third guy dies") }
+                  else {
                     output.offer _
                   }
 
@@ -47,5 +44,5 @@ object Ladder extends App {
           Fiber.awaitAll(workers)
       }
     } yield ()
-  }.foldM(ZIO.dieMessage _, _ => ZIO.succeed(0))
+  }.foldM(err => ZIO.dieMessage(err), _ => ZIO.succeed(0))
 }

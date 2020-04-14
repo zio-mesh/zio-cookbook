@@ -1,7 +1,7 @@
 package tagless
 
 import scala.concurrent.Future
-import zio.{ DefaultRuntime, Task }
+import zio.{ Runtime, Task }
 import zio.console.{ putStrLn }
 
 trait Greet[F[_]] {
@@ -30,8 +30,8 @@ object Main extends App {
   val greet1 = futGreet
   val greet2 = zioGreet
 
-  val rt = new DefaultRuntime {}
+  val rt = Runtime.default
   println(greet0.sayHello)
   println(greet1.sayHello)
-  rt.unsafeRun(greet2.sayHello >>= putStrLn)
+  rt.unsafeRun(greet2.sayHello >>= (v => putStrLn(v.toString)))
 }
