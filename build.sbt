@@ -51,3 +51,5 @@ addCommandAlias("rel", "reload")
 addCommandAlias("com", "all compile test:compile it:compile")
 addCommandAlias("fix", "all compile:scalafix test:scalafix")
 addCommandAlias("fmt", "all scalafmtSbt scalafmtAll")
+
+scalafixDependencies in ThisBuild += "com.nequissimus" %% "sort-imports" % "0.3.2"

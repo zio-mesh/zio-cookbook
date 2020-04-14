@@ -3,8 +3,8 @@ package zio.cookbook.bracket
 import java.io.{ File, FileInputStream }
 
 import zio._
-import zio.test._
 import zio.test.Assertion.{ equalTo, succeeds }
+import zio.test._
 
 object BrackSpec extends DefaultRunnableSpec {
   def spec = suite("Bracket Spec")(

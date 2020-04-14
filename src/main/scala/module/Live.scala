@@ -1,8 +1,9 @@
 package module
 
-import zio.Task
 import pureconfig.ConfigSource
 import pureconfig.generic.auto._
+
+import zio.Task
 
 trait Live extends Configuration {
   val config = new Configuration.Service[Any] {

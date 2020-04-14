@@ -1,10 +1,10 @@
 package fiber
 
-import zio._
-import zio.test._
-import zio.test.Assertion._
-
 import Fib0._
+
+import zio._
+import zio.test.Assertion._
+import zio.test._
 
 object Fib0 {
   def getIO    = IO.unit

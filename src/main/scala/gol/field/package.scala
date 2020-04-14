@@ -1,7 +1,8 @@
 package gol
 import gol.cell.{ Cell, CellLogic }
-import zio.{ Task, ZIO }
+
 import zio.random.Random
+import zio.{ Task, ZIO }
 
 package object field extends FieldLogic.Service[FieldLogic with Random] {
   override def randomField: FieldTask[Field] = ZIO.accessM(_.field.randomField)

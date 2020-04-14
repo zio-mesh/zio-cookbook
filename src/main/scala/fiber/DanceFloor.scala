@@ -1,12 +1,11 @@
 package zio.cookbook.fiber
 
-import zio.{ ZIO }
-import zio.cookbook.fiber.simplesemaphore._
-
-import zio.duration.Duration
 import zio.clock._
 import zio.console._
+import zio.cookbook.fiber.simplesemaphore._
+import zio.duration.Duration
 import zio.random._
+import zio.{ ZIO }
 
 object Party {
   val fibers    = 4

@@ -1,8 +1,9 @@
 package zio.cookbook.bracket
 
-import zio.{ Task, UIO }
 import java.io.FileInputStream
 import java.nio.charset.StandardCharsets
+
+import zio.{ Task, UIO }
 
 object BracketLib {
 

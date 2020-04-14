@@ -1,15 +1,13 @@
 package zio.cookbook.stm
 
-import zio.{ Schedule, ZIO }
-import zio.test._
-import zio.test.Assertion.{ equalTo }
-// import zio.test.TestAspect.{ ignore, timeout }
-import zio.stm.{ STM, TRef }
+import helper._
 
 import zio.cookbook.env.Common.{ UserID, UserProfile }
 import zio.cookbook.env.TestService._
-
-import helper._
+import zio.stm.{ STM, TRef }
+import zio.test.Assertion.{ equalTo }
+import zio.test._
+import zio.{ Schedule, ZIO }
 
 object MarketSpec extends DefaultRunnableSpec {
   def spec = suite("STMSpec")(

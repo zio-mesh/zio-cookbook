@@ -1,7 +1,8 @@
 package tagless
 
-import zio.{ Task, ZIO }
 import simulacrum.{ typeclass }
+
+import zio.{ Task, ZIO }
 
 @typeclass
 trait Eff[F[_]] {

@@ -1,7 +1,7 @@
 package zio.cookbook.fiber
 
-import zio.{ App, Fiber, UIO }
 import zio.console.{ putStrLn }
+import zio.{ App, Fiber, UIO }
 
 object Lib {
   def fib(n: Long): UIO[Long] =

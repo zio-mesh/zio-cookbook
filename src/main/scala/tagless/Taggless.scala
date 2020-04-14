@@ -1,8 +1,9 @@
 package tagless
 
 import scala.concurrent.Future
-import zio.{ Runtime, Task }
+
 import zio.console.{ putStrLn }
+import zio.{ Runtime, Task }
 
 trait Greet[F[_]] {
   def sayHello(): F[String]

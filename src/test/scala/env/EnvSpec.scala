@@ -1,8 +1,8 @@
 package zio.cookbook.env
 
-import zio.test._
-import zio.test.Assertion.{ equalTo }
 import zio.cookbook.env.Common.{ UserID, UserProfile }
+import zio.test.Assertion.{ equalTo }
+import zio.test._
 
 object DBSpec extends DefaultRunnableSpec {
   def spec = suite("DBSpec")(

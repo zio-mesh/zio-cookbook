@@ -2,8 +2,8 @@
 
 package zio.cookbook.env
 
-import zio.{ Task }
 import zio.cookbook.env.Common._
+import zio.{ Task }
 
 trait DatabaseLive extends Database {
   def database: Database.Service =

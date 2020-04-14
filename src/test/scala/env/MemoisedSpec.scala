@@ -1,11 +1,11 @@
 package env
 
-import zio.{ test => _, _ }
-import zio.test._
-import zio.test.Assertion._
-import zio.duration._
-
 import cats.Eval
+
+import zio.duration._
+import zio.test.Assertion._
+import zio.test._
+import zio.{ test => _, _ }
 
 object ToTest {
   var callCount: Int = 0;

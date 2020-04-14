@@ -1,10 +1,10 @@
 package zio.cookbook.fiber
 
 import zio.duration._
-import zio.test.{ assert, suite, testM, DefaultRunnableSpec }
 import zio.test.Assertion.{ isTrue }
 import zio.test.TestAspect.{ timeout }
 import zio.test.environment.Live
+import zio.test.{ assert, suite, testM, DefaultRunnableSpec }
 
 object DanceFloorSpec extends DefaultRunnableSpec {
   def spec = suite("DanceFloorSpec")(

@@ -1,8 +1,9 @@
 package gol.cell
 
-import zio._
 import gol.cell.Cell.State
 import gol.field._
+
+import zio._
 import zio.random.Random
 
 trait CellLogic {

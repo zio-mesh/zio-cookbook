@@ -2,6 +2,7 @@ package gol.field
 
 import gol.cell.Cell.State
 import gol.cell._
+
 import zio._
 import zio.random._
 

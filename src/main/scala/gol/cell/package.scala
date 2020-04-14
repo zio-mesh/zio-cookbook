@@ -1,6 +1,7 @@
 package gol
 
 import gol.field.{ Field, FieldLogic }
+
 import zio.ZIO
 import zio.random.Random
 
