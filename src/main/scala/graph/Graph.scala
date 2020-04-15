@@ -3,10 +3,15 @@ package graph
 import scalax.collection.Graph
 import scalax.collection.GraphPredef._
 
-sealed trait AST extends Product with Serializable
+sealed trait AST
 
-final case class NodeA(id: Int, op: Function1[Int, Int]) extends AST
-final case class NodeB(id: Int, op: Function1[Int, Int]) extends AST
+final case class NodeA(id: Int, op: Function1[Int, Int]) extends AST {
+  def run(): Unit = println(">>>>> Run A")
+}
+
+final case class NodeB(id: Int, op: Function1[Int, Int]) extends AST {
+  def run(): Unit = println(">>>>> Run B")
+}
 
 object App0 extends App {
 
@@ -34,19 +39,21 @@ object App0 extends App {
   println(s"Graph is directed: ${g.isDirected}")
   println(s"Graph is connected: ${g.isConnected}")
 
-  // val fld = g.nodes.foldLeft(g1)((a, b) => a + b)
-
-  // Find Edges
+  // Find nodes
   println(g.find(n0))
 
-  // Remove/Add edges
+  // Remove/Add nodes
   val g0 = g - n3
-  println(g0)
 
-  // Traverse graph
-  def procNode(node: g.NodeT): Unit = println(node)
+  // Traverse graph nodes
+  def procNode(node: g.NodeT): Unit = node.value match {
+    case n: NodeA => n.run()
+    case n: NodeB => n.run()
+    case _        =>
+  }
+  root.innerNodeTraverser.foreach(procNode)
 
-  root.innerEdgeTraverser.map(_.foreach(procNode))
-  val res0 = root.outerNodeTraverser.map(_.value)
+  // Traverse graph edges
+  val res0 = root.outerEdgeTraverser.map(_.value)
   println(res0)
 }
