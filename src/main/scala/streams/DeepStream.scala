@@ -8,7 +8,7 @@ import zio.clock.Clock
 import zio.console.putStrLn
 import zio.duration.Duration
 import zio.stream._
-import zio.{ Runtime, URIO, ZIO }
+import zio.{ Runtime, Task, URIO, ZIO }
 
 trait Common {
   val e = new RuntimeException("boom")
@@ -33,6 +33,7 @@ class Manager() {
 
 object App1 extends App {
   val rt = Runtime.default
+  val e  = new RuntimeException("boom")
 
   val N = 1
   val M = 1
@@ -42,9 +43,22 @@ object App1 extends App {
   val followers = (1 to M).map(Followers)
   val users     = List.fill(P)(User(channels, followers))
 
+  val rand = scala.util.Random
+
+  // FIXME Make failing
+  def blockById(id: Int): Task[Int] = {
+    rand.nextInt(10)
+    Task.succeed(id)
+  }
+
+  def procUser(user: User) /* : Task[Unit] */ =
+    for {
+      chStream <- Stream.fromIterable(channels).runCollect.fork
+      // folStream <- Stream.fromIterable(followers).ru
+    } yield ()
+
   val app = for {
-    userStream <- ZStream.fromIterable(users).runCollect
-    _          <- putStrLn(userStream.toString)
+    userStream <- Stream.fromIterable(users).foreach(procUser)
   } yield ()
 
   rt.unsafeRun(app)

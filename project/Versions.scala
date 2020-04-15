@@ -4,4 +4,5 @@ object Version {
   val cats           = "2.2.0-M1"
   val simulacrum     = "1.0.0"
   val pureconfig     = "0.12.3"
+  val graph          = "1.13.2"
 }

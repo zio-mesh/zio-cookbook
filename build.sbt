@@ -16,6 +16,10 @@ lazy val catsDeps = libraryDependencies ++= Seq(
   "org.typelevel" %% "cats-core" % Version.cats
 )
 
+lazy val graphDeps = libraryDependencies ++= Seq(
+  "org.scala-graph" %% "graph-core" % Version.graph
+)
+
 lazy val commonDeps = libraryDependencies ++= Seq(
   "org.typelevel"         %% "simulacrum" % Version.simulacrum,
   "com.github.pureconfig" %% "pureconfig" % Version.pureconfig
@@ -30,6 +34,7 @@ lazy val root = (project in file("."))
     maxErrors := 3,
     zioDeps,
     catsDeps,
+    graphDeps,
     commonDeps,
     testFrameworks := Seq(new TestFramework("zio.test.sbt.ZTestFramework"))
   )
