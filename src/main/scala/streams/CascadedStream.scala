@@ -3,7 +3,7 @@ import Helper._
 
 import zio.console.putStrLn
 import zio.stream.ZStream
-import zio.{ App, Promise }
+import zio.{ App, Promise, Ref }
 
 object App2 extends App {
   def run(args: List[String]) =
@@ -14,11 +14,18 @@ object App2 extends App {
 
   val app = for {
     latch       <- Promise.make[Nothing, Unit]
-    innerStream = ZStream.fromEffect(latch.succeed(()))
+    channelList <- Ref.make(List.empty[Channel])
 
-    followers <- outerStream.drainFork(innerStream).runDrain
-    _         <- putStrLn(followers.toString)
+    followerList <- outerStream // background stream
+                     .drainFork( // run inner stream, which sets the latch when its done
+                       (ZStream
+                         .fromEffect(doWork(channels) <* latch.succeed(()))) // create stream from a zipped effect
+                         .tap(channelList.set(_))                            // save inner stream output into ref
+                     )
+                     .runCollect // run, evaluate and collect outputs to the list
+
+    _ <- putStrLn(channelList.toString)
+    _ <- putStrLn(followerList.toString)
 
   } yield ()
-
 }
