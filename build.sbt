@@ -21,6 +21,7 @@ lazy val graphDeps = libraryDependencies ++= Seq(
 )
 
 lazy val commonDeps = libraryDependencies ++= Seq(
+  "joda-time"             % "joda-time"   % Version.joda,
   "org.typelevel"         %% "simulacrum" % Version.simulacrum,
   "com.github.pureconfig" %% "pureconfig" % Version.pureconfig
 )

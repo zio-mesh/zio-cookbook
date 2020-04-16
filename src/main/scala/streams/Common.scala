@@ -1,10 +1,14 @@
 package streams
 
+import java.util.concurrent.TimeUnit
+
 import Helper._
 
+import zio.clock.Clock
 import zio.console.Console
+import zio.duration.Duration
 import zio.stream.{ Stream, ZStream }
-import zio.{ IO, UIO, ZIO }
+import zio.{ IO, Queue, RIO, Schedule, UIO, URIO, ZIO }
 
 final case class Channel(id: Int) {
   def block(): Boolean = id % 2 == 0
@@ -62,4 +66,21 @@ object Helper {
   // Generic Stream Processor
   def doWork[A: Worker](entries: List[A]) = implicitly[Worker[A]].procEntity(entries)
 
+}
+
+object Timed {
+// Queue ops
+  def waitForValue[T](ref: UIO[T], value: T): URIO[Clock, T] =
+    (ref <* ZIO.sleep(Duration(1, TimeUnit.SECONDS))).repeat(Schedule.doWhile(_ != value))
+
+  def waitForSize[A](queue: Queue[A], size: Int): URIO[Clock, Int] =
+    waitForValue(queue.size, size)
+
+  def longSuccess[A](data: A): RIO[Clock, A] = ZIO.sleep(Duration(5, TimeUnit.SECONDS)) *> ZIO.succeed(data)
+
+  val longFail: ZIO[Clock, String, Nothing] = ZIO.sleep(Duration(5, TimeUnit.SECONDS)) *> ZIO.fail("boom")
+
+  val longExcept: RIO[Clock, Nothing] =
+
+    ZIO.sleep(Duration(5, TimeUnit.SECONDS)) *> ZIO.fail(new RuntimeException("Died"))
 }

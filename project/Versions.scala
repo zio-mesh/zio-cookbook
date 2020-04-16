@@ -5,4 +5,5 @@ object Version {
   val simulacrum     = "1.0.0"
   val pureconfig     = "0.12.3"
   val graph          = "1.13.2"
+  val joda           = "2.10.5"
 }
