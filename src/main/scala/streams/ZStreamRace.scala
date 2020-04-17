@@ -1,68 +1,57 @@
-package example
+package streams
 
-import zio.{ Queue, RIO, Ref, ZIO }
-import zio.stream.{ Stream }
-import zio.duration._
+import schedule.Common.getSecondsTimestamp
+
 import zio.console.{ putStrLn, Console }
+import zio.stream.{ Stream }
+import zio.{ App, Promise, Queue, Ref, ZIO }
 
-object Tst1 extends zio.App {
+object App7 extends App {
 
-  override def run(args: List[String]): ZIO[zio.ZEnv, Nothing, Int] = {
-    def process(q1: Queue[Int])(elem: Int) =
-      for {
-        _  <- q1.offer(elem * 100).when(elem <= 2)
-        rv <- zio.random.nextInt(10)
-        _  <- ZIO.sleep((rv + 5).millis)
-        _  <- putStrLn(s"Processed $elem sleep ${rv + 50} cur: ${System.currentTimeMillis()}")
-      } yield elem
+  override def run(args: List[String]) =
+    // logic.fold(_ => 1, _ => 0)
+    logic.as(0)
 
-    val valsLst     = (1 to 2).toList
-    val inputStream = Stream.fromIterable(valsLst).tap(e => putStrLn(s"IN $e"))
+  def process(data: List[Int]) = ZIO.succeed(data.map(_ * 10))
 
-    def readTask(queue: Queue[Int], ref: Ref[Int]): ZIO[Console, Nothing, Unit] =
-      inputStream
-        .merge(Stream.fromQueue(queue))
-        .buffer(4)
-        .tap(vv => putStrLn(s"Read $vv"))
-        .grouped(2)
-        .tap(batch => queue.offerAll(batch))
-        .tap(batch => ref.update(_ + batch.size))
-        .runDrain
+  val inputData   = List(1, 2, 3, 4)
+  val inputStream = Stream.fromIterable(inputData)
 
-    def procTask(queue: Queue[Int], refProc: Ref[Int], refLoad: Ref[Int]) =
-      Stream
-        .fromQueue(queue)
-        .tap(process(queue))
-        .tap(_ => refProc.update(_ + 1))
-        .tap(_el =>
-          for {
-            _  <- putStrLn("zel:" + _el)
-            q  <- queue.size
-            lc <- refLoad.get
-            pc <- refProc.get
-            _ <- putStrLn(
-                  "el:" + _el.toString + " ps: " + (q, lc, pc).toString + s" stop: ${q <= 0 && lc >= 0 && lc == pc}"
-                )
-            finish = q <= 0 && lc >= 0 && lc == pc
-          } yield finish
-        )
-        .runDrain
-
-    val logic: RIO[zio.ZEnv, Unit] = for {
-      _         <- putStrLn("Start")
-      q1        <- Queue.bounded[Int](10)
-      loaded    <- Ref.make(0)
-      processed <- Ref.make(0)
-
-      readFiber    <- readTask(q1, loaded).fork
-      processFiber <- procTask(q1, processed, loaded).fork
-
-      _ <- putStrLn("Pre Stop")
-      _ <- (readFiber *> processFiber).join
-      _ <- q1.shutdown
-      _ <- putStrLn("Stop")
+  def readTask(queue: Queue[Int], ref: Ref[List[Int]]): ZIO[Any, Nothing, Unit] =
+    for {
+      elems <- ZIO.succeed(inputData)
+      _     <- queue.offerAll(elems)
+      _     <- ref.update(_ ++ elems)
     } yield ()
 
-    logic.fold(_ => 1, _ => 0)
-  }
+  def procTask(queue: Queue[Int], ref: Ref[List[Int]]): ZIO[Console, Nothing, Unit] =
+    for {
+      _    <- putStrLn(s"Processing at time $getSecondsTimestamp")
+      din  <- queue.takeAll
+      dout <- process(din)
+      _    <- ref.update(_ ++ dout)
+    } yield ()
+
+  def procEff(queue: Queue[Int], ref: Ref[List[Int]]): ZIO[Any, Nothing, Unit] =
+    procTask(queue, ref).provideLayer(Console.live)
+
+  val logic = for {
+    _         <- putStrLn("Start")
+    queue     <- Queue.bounded[Int](10)
+    loaded    <- Ref.make(List.empty[Int])
+    processed <- Ref.make(List.empty[Int])
+    latch     <- Promise.make[Nothing, Unit]
+
+    loadFiber    <- inputStream.merge(Stream.fromEffect(readTask(queue, loaded))).runDrain.fork
+    processFiber <- Stream.fromEffect(procEff(queue, processed)).ensuring(latch.succeed(())).runCollect.fork
+
+    _    <- (loadFiber *> processFiber).join
+    _    <- latch.await
+    din  <- loaded.get
+    dout <- processed.get
+
+    _ <- putStrLn(s"loaded list: ${din}")
+    _ <- putStrLn(s"processed list: ${dout}")
+    _ <- queue.shutdown
+  } yield ()
 }

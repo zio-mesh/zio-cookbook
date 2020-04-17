@@ -1,9 +1,10 @@
 package schedule
 
+import Common._
+
+import zio.blocking.blocking
 import zio.console.putStrLn
 import zio.{ App, ZIO }
-import zio.blocking.blocking
-import Common._
 
 object App0 extends App {
   def run(args: List[String]) =
