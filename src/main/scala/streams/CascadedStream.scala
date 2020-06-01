@@ -3,7 +3,7 @@ import Helper._
 
 import zio.console.putStrLn
 import zio.stream.ZStream
-import zio.{ App, Promise, Ref }
+import zio.{ App, Chunk, Promise, Ref }
 
 object App2 extends App {
   def run(args: List[String]) = app.exitCode
@@ -12,7 +12,7 @@ object App2 extends App {
 
   val app = for {
     latch       <- Promise.make[Nothing, Unit]
-    channelList <- Ref.make(List.empty[Channel])
+    channelList <- Ref.make(List.empty[Chunk[Channel]])
 
     followerList <- outerStream // background stream
                      .drainFork( // run inner stream, which sets the latch when its done

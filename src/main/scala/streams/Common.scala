@@ -8,7 +8,7 @@ import zio.clock.Clock
 import zio.console.Console
 import zio.duration.Duration
 import zio.stream.{ Stream, ZStream }
-import zio.{ IO, Queue, RIO, Schedule, UIO, URIO, ZIO }
+import zio.{ Chunk, IO, Queue, RIO, Schedule, UIO, URIO, ZIO }
 
 final case class Channel(id: Int) {
   def block(): Boolean = id % 2 == 0
@@ -20,7 +20,7 @@ final case class Follower(id: Int) {
 
 // Define Stream Workers TypeClass
 trait Worker[A] {
-  def procEntity(list: List[A]): ZIO[Console, Nothing, List[A]]
+  def procEntity(list: List[A]): ZIO[Console, Nothing, List[Chunk[A]]]
 }
 object Worker {
   implicit val chWork = new Worker[Channel] {
@@ -37,7 +37,7 @@ object Worker {
   }
 
   implicit val flwWork = new Worker[Follower] {
-    def procEntity(list: List[Follower]): ZIO[zio.console.Console, Nothing, List[Follower]] =
+    def procEntity(list: List[Follower]): ZIO[zio.console.Console, Nothing, List[Chunk[Follower]]] =
       for {
         channelOut <- Stream
                        .fromIterable(list)

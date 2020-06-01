@@ -23,7 +23,7 @@ object App5 extends App {
 object App6 extends App {
   def run(args: List[String]) = app.exitCode
 
-  val succ  = (Timed.longSuccess(3) <*> putStrLn("Tap")).provideLayer(Clock.live ++ Console.live)
+  val succ  = (Timed.longSuccess(3) <* putStrLn("Tap")).provideLayer(Clock.live ++ Console.live)
   val fail  = Timed.longFail.provideLayer(Clock.live)
   val fatal = Timed.longExcept.provideLayer(Clock.live)
 
