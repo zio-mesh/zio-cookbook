@@ -1,8 +1,8 @@
 package streams
 
+import zio.{ App }
 import zio.console.putStrLn
 import zio.stream._
-import zio.{ App }
 
 object App0 extends App {
   def run(args: List[String]) = app0.exitCode

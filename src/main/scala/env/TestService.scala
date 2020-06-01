@@ -2,8 +2,8 @@
 
 package zio.cookbook.env
 
-import zio.cookbook.env.Common._
 import zio.{ Task }
+import zio.cookbook.env.Common._
 
 class TestService extends Database.Service {
   private var map: Map[UserID, UserProfile] = Map()
