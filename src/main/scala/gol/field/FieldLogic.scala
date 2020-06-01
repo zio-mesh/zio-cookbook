@@ -31,7 +31,7 @@ object FieldLogic {
     def parseField(str: String): FieldTask[Field]
   }
 
-  class StdRules(rows: Int, cols: Int, allowDiagonals: Boolean, batchSize: Int) extends FieldLogic {
+  class StdRules(rows: Int, cols: Int, allowDiagonals: Boolean /* , batchSize: Int */ ) extends FieldLogic {
     override val field: Service[Any] = new Service[Any] {
 
       override def persistField(f: Field): FieldTask[String] = ZIO.effect {
@@ -112,10 +112,9 @@ object FieldLogic {
   }
 
   object StdRules {
-    def apply(rows: Int, cols: Int, allowDiagonals: Boolean): StdRules = {
-      val batchSize = (rows * cols) / 4
-      new StdRules(rows, cols, allowDiagonals, batchSize)
-    }
+    def apply(rows: Int, cols: Int, allowDiagonals: Boolean): StdRules =
+      // val batchSize = (rows * cols) / 4
+      new StdRules(rows, cols, allowDiagonals /* , batchSize */ )
   }
 
 }
