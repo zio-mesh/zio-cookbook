@@ -8,9 +8,7 @@ import zio.{ App, Promise, Queue, Ref, ZIO }
 
 object App7 extends App {
 
-  override def run(args: List[String]) =
-    // logic.fold(_ => 1, _ => 0)
-    logic.as(0)
+  override def run(args: List[String]) = logic.exitCode
 
   def process(data: List[Int]) = ZIO.succeed(data.map(_ * 10))
 

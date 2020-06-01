@@ -79,7 +79,7 @@ object FieldLogic {
       }
 
       override def randomField: FieldTaskR[Random, Field] = {
-        val randomCellState = nextInt(3).map(idx => Cell.State.formIdx(idx))
+        val randomCellState = nextInt.map(idx => Cell.State.formIdx(idx))
         for {
           rnd <- ZIO.environment[Random]
           fld <- fieldT(randomCellState.provide(rnd))

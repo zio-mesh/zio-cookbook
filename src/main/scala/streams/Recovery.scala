@@ -8,8 +8,7 @@ import zio.stream.{ Stream }
 import zio.{ App, Schedule }
 
 object App5 extends App {
-  def run(args: List[String]) =
-    app.as(0)
+  def run(args: List[String]) = app.exitCode
 
   val s1    = Stream(1, 2) ++ Stream.fail("Boom")
   val s2    = Stream(3, 4)
@@ -22,8 +21,7 @@ object App5 extends App {
 }
 
 object App6 extends App {
-  def run(args: List[String]) =
-    app.fold(_ => 1, _ => 0)
+  def run(args: List[String]) = app.exitCode
 
   val succ  = (Timed.longSuccess(3) <*> putStrLn("Tap")).provideLayer(Clock.live ++ Console.live)
   val fail  = Timed.longFail.provideLayer(Clock.live)

@@ -5,9 +5,7 @@ import zio.stream._
 import zio.{ App }
 
 object App0 extends App {
-  def run(args: List[String]) =
-    // app.fold(_ => 1, _ => 0)
-    app0.as(0)
+  def run(args: List[String]) = app0.exitCode
 
   def streamReduce(total: Int, element: Int): Int = total + element
 

@@ -18,8 +18,7 @@ object Lib {
 }
 
 object App0 extends App {
-  def run(args: List[String]) =
-    compute0.as(0)
+  def run(args: List[String]) = compute0.exitCode
 
   val compute0 = for {
     fibs <- Lib.fib(10).fork

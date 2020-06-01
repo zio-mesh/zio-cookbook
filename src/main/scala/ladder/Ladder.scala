@@ -15,7 +15,8 @@ object Ladder extends App {
 
   override def run(args: List[String]) = {
     val rubles = List.fill(50)(2)
-    for {
+
+    val out = for {
       work <- Queue
                .unbounded[Int]
                .tap(_.offerAll(rubles))
@@ -44,5 +45,6 @@ object Ladder extends App {
           Fiber.awaitAll(workers)
       }
     } yield ()
-  }.foldM(err => ZIO.dieMessage(err), _ => ZIO.succeed(0))
+    out.exitCode
+  }
 }

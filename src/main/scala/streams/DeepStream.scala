@@ -8,9 +8,7 @@ import zio.duration._
 import zio.{ App, Promise }
 
 object App1 extends App {
-  def run(args: List[String]) =
-    // app.fold(_ => 1, _ => 0)
-    app.as(0)
+  def run(args: List[String]) = app.exitCode
 
   val app = for {
     latch <- Promise.make[Nothing, Unit]

@@ -7,8 +7,7 @@ import zio.console.putStrLn
 import zio.{ App, ZIO }
 
 object App0 extends App {
-  def run(args: List[String]) =
-    app.fold(_ => 1, _ => 0)
+  def run(args: List[String]) = app.exitCode
 
   val app = for {
     res0 <- eff0.repeat(simpleSched)
@@ -19,8 +18,7 @@ object App0 extends App {
 }
 
 object App1 extends App {
-  def run(args: List[String]) =
-    app3.fold(_ => 1, _ => 0)
+  def run(args: List[String]) = app3.exitCode
 
   val app0 = blocking(eff0.retry(simpleSched).tap(msg => putStrLn(msg.toString)))
   val app1 = blocking(eff1.retry(timedSched).tap(msg => putStrLn(msg.toString)))

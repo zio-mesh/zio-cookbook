@@ -7,8 +7,7 @@ import zio.stream.{ Stream, ZStream }
 import zio.{ App, IO, Queue }
 
 object App3 extends App {
-  def run(args: List[String]) =
-    app.as(0)
+  def run(args: List[String]) = app.exitCode
 
   val app = for {
     queue <- Queue.bounded[Int](10)
@@ -19,8 +18,7 @@ object App3 extends App {
 }
 
 object App4 extends App {
-  def run(args: List[String]) =
-    app.as(0)
+  def run(args: List[String]) = app.exitCode
 
   val list = List(1, 2, 3)
 

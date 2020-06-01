@@ -24,7 +24,7 @@ trait Worker[A] {
 }
 object Worker {
   implicit val chWork = new Worker[Channel] {
-    def procEntity(list: List[Channel]): ZIO[zio.console.Console, Nothing, List[Channel]] =
+    def procEntity(list: List[Channel]) =
       for {
         channelOut <- Stream
                        .fromIterable(list)
@@ -60,7 +60,7 @@ object Helper {
   val channels  = (1 to N).map(Channel).toList
   val followers = (1 to M).map(Follower).toList
 
-  def nPulls[R, E, A](pull: ZStream.Pull[R, E, A], n: Int): ZIO[R, Nothing, List[Either[Option[E], A]]] =
+  def nPulls[R, E, A](pull: ZStream.Pull[R, E, A], n: Int) =
     ZIO.foreach(1 to n)(_ => pull.either)
 
   // Generic Stream Processor

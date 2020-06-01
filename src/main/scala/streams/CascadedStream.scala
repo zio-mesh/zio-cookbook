@@ -6,9 +6,7 @@ import zio.stream.ZStream
 import zio.{ App, Promise, Ref }
 
 object App2 extends App {
-  def run(args: List[String]) =
-    // app.fold(_ => 1, _ => 0)
-    app.as(0)
+  def run(args: List[String]) = app.exitCode
 
   val outerStream = ZStream.fromEffect(doWork(followers))
 
