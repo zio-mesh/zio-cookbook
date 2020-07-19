@@ -1,4 +1,5 @@
 object Version {
+  val dotty          = "0.26.0-bin-20200718-c753ca3-NIGHTLY"
   val zio            = "1.0.0-RC21-2"
   val zioInteropCats = "2.1.4.0-RC17"
   val cats           = "2.2.0-RC1"

@@ -105,7 +105,7 @@ object FieldLogic {
 
       override def makeTurn(f: Field): FieldTaskR[CellLogic with FieldLogic with Random, Field] =
         for {
-          batches  <- ZIO.effectTotal(f.allCells.grouped(100).iterator.to(Iterable))
+          batches  <- ZIO.effectTotal(f.allCells.grouped(100).toList)
           newCells <- ZIO.foreachPar(batches)(batch => ZIO.collectAll(batch.map(cell => nextState(cell, f))))
         } yield f.updateStep(newCells)
     }

@@ -29,11 +29,12 @@ lazy val commonDeps = libraryDependencies ++= Seq(
 )
 
 lazy val root = (project in file("."))
+  .settings(dottySettings)
   .settings(
     organization := "Neurodyne",
     name := "zio-cookbook",
     version := "0.0.1",
-    scalaVersion := "2.12.11",
+    scalaVersion := "2.13.3",
     crossScalaVersions := Seq("2.12.11", "2.13.3"),
     macroExpansionSettings,
     maxErrors := 3,
