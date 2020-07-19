@@ -24,7 +24,7 @@ object App7 extends App {
 
   def procTask(queue: Queue[Int], ref: Ref[List[Int]]): ZIO[Console, Nothing, Unit] =
     for {
-      _    <- putStrLn(s"Processing at time $getSecondsTimestamp")
+      _    <- putStrLn(s"Processing at time ${getSecondsTimestamp()}")
       din  <- queue.takeAll
       dout <- process(din)
       _    <- ref.update(_ ++ dout)

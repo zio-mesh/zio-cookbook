@@ -32,7 +32,7 @@ object Main extends App {
   val greet2 = zioGreet
 
   val rt = Runtime.default
-  println(greet0.sayHello)
-  println(greet1.sayHello)
-  rt.unsafeRun(greet2.sayHello >>= (v => putStrLn(v.toString)))
+  println(greet0.sayHello())
+  println(greet1.sayHello())
+  rt.unsafeRun(greet2.sayHello() >>= (v => putStrLn(v.toString)))
 }

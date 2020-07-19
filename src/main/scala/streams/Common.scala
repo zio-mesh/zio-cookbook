@@ -28,7 +28,7 @@ object Worker {
       for {
         channelOut <- Stream
                        .fromIterable(list)
-                       .mapM(item => if (item.block) IO.fail(s"Failed for $item.id") else UIO.succeed(item))
+                       .mapM(item => if (item.block()) IO.fail(s"Failed for $item.id") else UIO.succeed(item))
                        .buffer(bufferDepth)
                        .process
                        .use(nPulls(_, procDepth))
@@ -41,7 +41,7 @@ object Worker {
       for {
         channelOut <- Stream
                        .fromIterable(list)
-                       .mapM(item => if (item.block) IO.fail(s"Failed for $item.id") else UIO.succeed(item))
+                       .mapM(item => if (item.block()) IO.fail(s"Failed for $item.id") else UIO.succeed(item))
                        .buffer(bufferDepth)
                        .process
                        .use(nPulls(_, procDepth))

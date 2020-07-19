@@ -2,7 +2,7 @@ package tagless
 
 import simulacrum.{ typeclass }
 
-import zio.{ Task, ZIO }
+import zio.{ Task }
 
 @typeclass
 trait Eff[F[_]] {
@@ -20,5 +20,5 @@ import Eff._
 object App0 extends App {
   val eff0 = Eff[Task].hello("Task")
 
-  eff0.foldM(err => ZIO.fail(err), _ => ZIO.succeed(0))
+  eff0.exitCode
 }

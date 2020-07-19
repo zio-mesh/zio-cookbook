@@ -4,7 +4,7 @@ import Common._
 
 import zio.blocking.blocking
 import zio.console.putStrLn
-import zio.{ App, ZIO }
+import zio.{ App }
 
 object App0 extends App {
   def run(args: List[String]) = app.exitCode

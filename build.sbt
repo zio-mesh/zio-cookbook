@@ -1,3 +1,5 @@
+import BuildHelper._
+
 resolvers ++= Seq(
   Resolver.mavenLocal,
   Resolver.sonatypeRepo("releases"),
@@ -31,7 +33,9 @@ lazy val root = (project in file("."))
     organization := "Neurodyne",
     name := "zio-cookbook",
     version := "0.0.1",
-    scalaVersion := "2.13.2",
+    scalaVersion := "2.12.11",
+    crossScalaVersions := Seq("2.12.11", "2.13.3"),
+    macroExpansionSettings,
     maxErrors := 3,
     zioDeps,
     catsDeps,
@@ -43,11 +47,6 @@ lazy val root = (project in file("."))
 scalacOptions --= Seq(
   "-Xfatal-warnings"
 )
-// Scala 2.13
-scalacOptions ++= Seq(
-  "-Ymacro-annotations",
-  "-Ywarn-unused"
-)
 
 addCompilerPlugin("org.typelevel" %% "kind-projector"     % "0.11.0" cross CrossVersion.full)
 addCompilerPlugin("com.olegpy"    %% "better-monadic-for" % "0.3.1")
@@ -58,4 +57,4 @@ addCommandAlias("com", "all compile test:compile it:compile")
 addCommandAlias("fix", "all compile:scalafix test:scalafix")
 addCommandAlias("fmt", "all scalafmtSbt scalafmtAll")
 
-scalafixDependencies in ThisBuild += "com.nequissimus" %% "sort-imports" % "0.5.0"
+scalafixDependencies in ThisBuild += "com.nequissimus" %% "sort-imports" % "0.5.4"
